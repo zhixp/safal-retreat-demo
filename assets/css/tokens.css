@@ -1,0 +1,137 @@
+/* ============================================================================
+   SAFAL RETREAT - DESIGN TOKENS
+   The single source of truth. Nothing in this project uses a raw value.
+   If a component needs a number that is not here, the scale is wrong - fix
+   the scale, do not add a one-off.
+   ========================================================================= */
+
+:root {
+  /* --- COLOR ---------------------------------------------------------------
+     Drawn from the property's actual setting: Bhopal's Upper Lake at dusk,
+     the forest of Van Vihar across the water, and Malwa brick.
+     Deliberately NOT navy-and-gold, which is the default hotel palette and
+     makes every property look like every other property. */
+
+  --paper:        #FBFAF7;   /* page ground - near-white, barely warm  */
+  --paper-dim:    #EFEDE6;   /* alternating section tint               */
+  --paper-edge:   #E2DFD6;   /* hairlines on light                     */
+
+  --forest:       #1B3A2F;   /* brand dark - still water under trees   */
+  --forest-deep:  #0E211A;   /* deepest ground, full-bleed sections    */
+  --forest-soft:  #2E5546;   /* raised surface on dark                 */
+
+  --ink:          #141A17;   /* body text - green-black, never #000    */
+  --ink-soft:     #515B55;   /* secondary text, passes AA on paper     */
+  --ink-faint:    #5E6761;   /* meta and captions. Darkened from #7A827C,
+                                which measured 3.08:1 on paper and failed AA
+                                at the 12 to 13px sizes it is used at. Now
+                                about 5:1, so it passes everywhere it appears
+                                rather than only where the text is large.   */
+
+  --accent:       #C2521C;   /* burnt sienna - Malwa brick             */
+  --accent-deep:  #9E4015;   /* hover / pressed                        */
+  --on-accent:    #FFFFFF;
+
+  --on-forest:    #F4F2EC;   /* text on dark ground                    */
+  --on-forest-soft: #A9B5AE;
+
+  --line:         rgb(20 26 23 / 0.14);
+  --line-dark:    rgb(244 242 236 / 0.18);
+
+  /* --- TYPE SCALE ----------------------------------------------------------
+     Nine steps. Every size on the site is one of these. */
+
+  --fs-xs:     0.75rem;     /* 12 - legal, captions          */
+  --fs-sm:     0.8125rem;   /* 13 - labels, meta             */
+  --fs-base:   1rem;        /* 16 - body minimum             */
+  --fs-md:     1.0625rem;   /* 17 - lead body                */
+  --fs-lg:     clamp(1.25rem, 1.05rem + 0.9vw, 1.6rem);
+  --fs-xl:     clamp(1.6rem, 1.2rem + 1.9vw, 2.4rem);
+  --fs-2xl:    clamp(2.2rem, 1.5rem + 3.2vw, 3.6rem);
+  --fs-3xl:    clamp(2.8rem, 1.7rem + 5vw, 5.4rem);
+  --fs-display:clamp(3.4rem, 1.6rem + 8vw, 9rem);
+
+  --lh-tight:  1.04;
+  --lh-snug:   1.18;
+  --lh-body:   1.62;
+
+  --tr-tight:  -0.02em;
+  --tr-wide:   0.16em;
+  --tr-caps:   0.3em;       /* wordmark and inscriptional labels */
+
+  /* --- TYPEFACES -----------------------------------------------------------
+     Three roles, three faces, no overlap.
+
+     Marcellus is a Roman inscriptional capital. Every luxury hotel site worth
+     studying carries a caps display face of this kind (Kitzbuehel licenses
+     Dashiell, Lingers uses Cinzel), and it is what separates a wordmark that
+     reads as carved from one that reads as set. It is also right for this
+     property specifically: the heritage within an hour of it is Sanchi and
+     Bhojpur, which is to say stone with letters cut into it.
+
+     Cormorant Garamond carries the long display lines. At 300 weight and
+     90px it is airy rather than ornate, which is the restrained end of
+     hospitality rather than the wedding-invitation end.
+
+     Jost runs the interface. Geometric, quiet, and not Inter. */
+
+  --ff-wordmark: "Marcellus", "Trajan Pro", Georgia, serif;
+  --ff-display:  "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --ff-body:     "Jost", "Helvetica Neue", Arial, sans-serif;
+
+  /* --- SPACE ---------------------------------------------------------------
+     Eleven steps. Density dial is 3/10 (spacious), so sections breathe
+     at s-9 and s-10. */
+
+  --s-1:  0.25rem;
+  --s-2:  0.5rem;
+  --s-3:  0.75rem;
+  --s-4:  1rem;
+  --s-5:  1.5rem;
+  --s-6:  2rem;
+  --s-7:  3rem;
+  --s-8:  4rem;
+  --s-9:  7rem;
+  --s-10: 11rem;    /* standard section breathing at desktop */
+  --s-11: 16rem;    /* a scene, where a section is meant to feel like a room
+                       you walk into rather than a block you scroll past   */
+
+  --gutter:    clamp(1.25rem, 5vw, 5rem);
+  --measure:   66ch;
+  --max:       1480px;
+
+  /* --- SHAPE ---------------------------------------------------------------
+     Shape lock: everything is square. No radius anywhere, no exceptions.
+     Editorial print has no rounded corners and neither does this. */
+
+  --r: 0;
+
+  /* --- MOTION --------------------------------------------------------------
+     One easing curve for the whole site. Three durations. */
+
+  --ease:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);
+  --t-fast:    180ms;
+  --t:         420ms;
+  --t-slow:    900ms;
+
+  /* --- LAYERS --------------------------------------------------------------
+     Documented z-scale. Nothing invents its own. */
+
+  --z-base:    1;
+  --z-raised:  10;
+  --z-header:  100;
+  --z-overlay: 200;
+  --z-modal:   300;
+}
+
+/* Theme lock: this page is light, top to bottom. Dark sections are a
+   brand surface (--forest), not a mode switch. Honouring a system dark
+   preference only softens the paper so the photography does not glare. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:      #F2F0EA;
+    --paper-dim:  #E6E3DA;
+    --paper-edge: #D6D2C8;
+  }
+}

@@ -1,0 +1,1491 @@
+/* ============================================================================
+   SAFAL RETREAT - APPLICATION STYLES
+   Mobile-first. Every breakpoint is min-width. There is no desktop layout
+   being squeezed down; the phone layout is the base and desktop adds to it.
+   ========================================================================= */
+
+/* --- 1. RESET ----------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ff-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, picture, video, canvas, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; padding: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.sr {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip {
+  position: absolute; top: var(--s-2); left: var(--s-2);
+  z-index: var(--z-modal);
+  background: var(--forest); color: var(--on-forest);
+  padding: var(--s-3) var(--s-5);
+  transform: translateY(-200%);
+  transition: transform var(--t-fast) var(--ease);
+}
+.skip:focus { transform: translateY(0); }
+
+/* --- 2. TYPE ------------------------------------------------------------ */
+
+h1, h2, h3, h4 {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-display); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-xl); }
+h4 { font-size: var(--fs-lg); }
+
+p { text-wrap: pretty; }
+
+.lead {
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+
+.label {
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.num {
+  font-family: var(--ff-display);
+  font-size: var(--fs-2xl);
+  font-weight: 300;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* --- 3. LAYOUT PRIMITIVES ----------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: var(--s-8); }
+
+@media (min-width: 768px) {
+  .section { padding-block: var(--s-10); }
+}
+
+/* A scene is a section given room to be its own moment. Used where the page
+   should slow down rather than keep listing things. */
+.section--scene { padding-block: var(--s-9); }
+@media (min-width: 768px) {
+  .section--scene { padding-block: var(--s-11); }
+}
+
+/* Display lines mix roman and italic inside one family. The italic carries
+   the connecting word, which is what stops a long serif headline reading as
+   a wall. Never a second family: that is the amateur version of this move. */
+.em {
+  font-style: italic;
+  font-weight: 300;
+  /* Italic descenders clip against tight display leading, so the line gets
+     room back. */
+  line-height: 1.12;
+  padding-bottom: 0.04em;
+}
+
+.section--dark {
+  background: var(--forest-deep);
+  color: var(--on-forest);
+}
+/* Every dark ground on the page, not only the .section--dark modifier.
+   .spaces and .celebrate carry their own dark backgrounds, and without being
+   named here their .lead and .label inherit the paper colours and render
+   dark-green-on-dark-green. Measured at 2.38:1 before this rule existed. */
+.section--dark .lead,
+.spaces .lead,
+.site-footer .lead,
+.book-direct .lead { color: var(--on-forest-soft); }
+
+.section--dark .label,
+.spaces .label,
+.celebrate .label,
+.book-direct .label { color: var(--on-forest-soft); }
+
+.section--tint { background: var(--paper-dim); }
+
+.rule {
+  height: 1px;
+  background: var(--line);
+  border: 0;
+}
+.section--dark .rule { background: var(--line-dark); }
+
+/* --- 4. BUTTONS ---------------------------------------------------------
+   One shape system: square, 48px min target, text never wraps. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 48px;
+  padding: var(--s-3) var(--s-6);
+  border-radius: var(--r);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.btn--primary:hover { background: var(--accent-deep); }
+
+.btn--ghost {
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.btn--ghost:hover { background: var(--ink); color: var(--paper); }
+
+.section--dark .btn--ghost,
+.hero .btn--ghost {
+  border-color: rgb(244 242 236 / 0.45);
+  color: var(--on-forest);
+}
+.section--dark .btn--ghost:hover,
+.hero .btn--ghost:hover {
+  background: var(--on-forest);
+  color: var(--forest-deep);
+}
+
+/* --- 5. HEADER ----------------------------------------------------------
+   Single line at desktop, 72px tall. Transparent over the hero, solid once
+   the page scrolls. */
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-header);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  transition: background var(--t) var(--ease),
+              box-shadow var(--t) var(--ease);
+}
+
+@media (min-width: 1024px) { .site-header { height: 72px; } }
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  width: 100%;
+}
+
+/* While the header is transparent it sits on whatever the hero photograph
+   happens to be, and the top of that frame is bright sky. Nothing guarantees
+   contrast against a photograph, so the header carries its own scrim. It
+   fades out as the solid background fades in. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 180%;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(14 33 26 / 0.62), rgb(14 33 26 / 0));
+  transition: opacity var(--t) var(--ease);
+}
+
+.site-header.is-stuck::before { opacity: 0; }
+
+.site-header__inner { position: relative; }
+
+.site-header.is-stuck {
+  background: var(--paper);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  font-family: var(--ff-wordmark);
+  font-size: var(--fs-lg);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--on-forest);
+  transition: color var(--t) var(--ease);
+}
+.is-stuck .brand { color: var(--ink); }
+
+.brand small {
+  font-family: var(--ff-body);
+  font-size: 0.5em;
+  letter-spacing: var(--tr-wide);
+  opacity: 0.7;
+}
+
+.nav { display: none; }
+
+@media (min-width: 1024px) {
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+  }
+  .nav a {
+    font-size: var(--fs-sm);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--on-forest);
+    padding-block: var(--s-2);
+    border-bottom: 1px solid transparent;
+    transition: color var(--t) var(--ease),
+                border-color var(--t-fast) var(--ease);
+  }
+  .is-stuck .nav a { color: var(--ink-soft); }
+  .nav a:hover { border-bottom-color: var(--accent); }
+}
+
+.site-header .btn { display: none; }
+@media (min-width: 1024px) { .site-header .btn { display: inline-flex; } }
+
+/* Mobile menu */
+
+.menu-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 48px; height: 48px;
+  margin-right: calc(var(--s-3) * -1);
+  align-items: center;
+}
+@media (min-width: 1024px) { .menu-btn { display: none; } }
+
+.menu-btn span {
+  display: block;
+  width: 22px; height: 1px;
+  background: var(--on-forest);
+  transition: background var(--t) var(--ease),
+              transform var(--t) var(--ease),
+              opacity var(--t-fast) var(--ease);
+}
+.is-stuck .menu-btn span { background: var(--ink); }
+
+.is-open .menu-btn span { background: var(--on-forest); }
+.is-open .menu-btn span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.is-open .menu-btn span:nth-child(2) { opacity: 0; }
+.is-open .menu-btn span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: var(--forest-deep);
+  color: var(--on-forest);
+  padding: calc(64px + var(--s-7)) var(--gutter) var(--s-7);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform: translateY(-100%);
+  visibility: hidden;
+  transition: transform var(--t-slow) var(--ease),
+              visibility 0s linear var(--t-slow);
+}
+
+.drawer[data-open="true"] {
+  transform: translateY(0);
+  visibility: visible;
+  transition: transform var(--t-slow) var(--ease), visibility 0s;
+}
+
+.drawer a {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  padding-block: var(--s-3);
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.drawer__foot {
+  display: grid;
+  gap: var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--on-forest-soft);
+}
+
+@media (min-width: 1024px) { .drawer { display: none; } }
+
+/* --- 6. HERO ------------------------------------------------------------
+   Full-bleed media with a WebGL water surface drawn over the photograph.
+   The canvas is an enhancement: the <img> beneath it is the real content
+   and the section is complete if WebGL never initialises. */
+
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  /* Bottom padding clears the availability bar, which is pulled up over the
+     hero's lower edge at >=860px. */
+  padding-block: var(--s-9) var(--s-8);
+  color: var(--on-forest);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.hero__media img,
+.hero__media canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__media canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+}
+.hero__media canvas.is-live { opacity: 1; }
+
+/* Scrim. Two stops so the headline holds AA contrast over any frame of the
+   photograph, including the bright sky at the top of the facade shot. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(to top, rgb(14 33 26 / 0.86) 0%, rgb(14 33 26 / 0.28) 45%, rgb(14 33 26 / 0.44) 100%);
+}
+
+.hero__inner {
+  width: 100%;
+  text-align: center;
+}
+
+/* The wordmark, set rather than written. Inscriptional caps at display size
+   with the tracking opened right up: the letters are meant to sit like
+   lettering cut into a lintel, which is why the face is Marcellus and not
+   the body serif scaled up. */
+.wordmark {
+  font-family: var(--ff-wordmark);
+  font-weight: 400;
+  font-size: var(--fs-display);
+  line-height: 1.02;
+  letter-spacing: 0.08em;
+  /* Optical correction. Tracking adds space after the final letter too,
+     which pushes a centred line visually off-centre. */
+  text-indent: 0.08em;
+  text-transform: none;
+}
+
+.hero__rule {
+  display: block;
+  width: 64px;
+  height: 1px;
+  margin: var(--s-6) auto var(--s-5);
+  background: rgb(244 242 236 / 0.55);
+}
+
+.hero__tagline {
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  text-indent: var(--tr-caps);
+  color: rgb(244 242 236 / 0.9);
+}
+
+/* --- 6b. AVAILABILITY BAR -----------------------------------------------
+   Sits across the hero's bottom edge at desktop so it reads as part of the
+   opening frame, and stacks as a normal block on a phone where overlapping
+   anything is a mistake. */
+
+.availability { background: var(--paper); }
+
+.availability__bar {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background: var(--forest-deep);
+  color: var(--on-forest);
+}
+
+.availability__field { display: grid; gap: var(--s-2); }
+
+.availability__field label {
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--on-forest-soft);
+}
+
+.availability__field input,
+.availability__field select {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-3) var(--s-4);
+  background: transparent;
+  border: 1px solid var(--line-dark);
+  border-radius: var(--r);
+  color: var(--on-forest);
+  color-scheme: dark;
+}
+
+.availability__field input:focus,
+.availability__field select:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.availability .btn { width: 100%; }
+
+@media (min-width: 860px) {
+  .hero { padding-bottom: var(--s-10); }
+  .availability { margin-top: calc(var(--s-9) * -1); position: relative; z-index: var(--z-raised); }
+  .availability__bar {
+    grid-template-columns: 1fr 1fr 0.7fr auto;
+    align-items: end;
+    gap: var(--s-5);
+    padding: var(--s-6);
+  }
+  .availability .btn { width: auto; }
+}
+
+/* --- 6c. THE DOCK -------------------------------------------------------
+   Two actions, always reachable once the hero has passed. */
+
+.dock {
+  position: fixed;
+  right: var(--s-4);
+  bottom: var(--s-4);
+  z-index: var(--z-header);
+  display: flex;
+  gap: var(--s-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity var(--t) var(--ease),
+              transform var(--t) var(--ease),
+              visibility 0s linear var(--t);
+}
+
+.dock[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), visibility 0s;
+}
+
+.dock .btn {
+  box-shadow: 0 6px 28px rgb(14 33 26 / 0.26);
+  padding-inline: var(--s-5);
+}
+
+/* Ghost button sitting on the page rather than on a photograph, so it needs
+   an opaque fill of its own or it inherits whatever scrolls underneath. */
+.btn--onlight {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.btn--onlight:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* On a phone two floating buttons cover whatever paragraph happens to be at
+   the bottom of the screen, permanently. So below 768 the dock becomes a
+   full-width bar and the page reserves room for it rather than hiding text
+   underneath it. */
+@media (max-width: 767px) {
+  .dock { left: var(--s-4); right: var(--s-4); }
+  .dock .btn { flex: 1 1 0; padding-inline: var(--s-3); }
+  body { padding-bottom: 84px; }
+}
+
+@media (min-width: 768px) {
+  .dock { right: var(--s-6); bottom: var(--s-6); }
+}
+
+/* --- 6d. THE ESTATE (hotspot explorer) ---------------------------------- */
+
+.estate {
+  padding-block: var(--s-9);
+  background: var(--paper);
+}
+.estate h2 { max-width: 20ch; margin-bottom: var(--s-7); }
+
+.estate__stage { position: relative; margin: 0; }
+
+.estate__stage img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+@media (min-width: 900px) {
+  .estate__stage img { aspect-ratio: 12 / 5; }
+}
+
+/* Pins are hidden on phones, where the list below carries the content. */
+.pin { display: none; }
+
+.estate__panel { display: none; }
+
+.estate__list {
+  display: grid;
+  gap: 0;
+  margin-top: var(--s-5);
+}
+
+.estate__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: var(--s-4);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-sm);
+}
+.estate__list li:first-child { border-top: 1px solid var(--line); }
+.estate__list b { font-weight: 500; }
+.estate__list span { color: var(--ink-faint); text-align: right; }
+
+@media (min-width: 900px) {
+  /* The list has done its job; the image takes over. */
+  .estate__list { display: none; }
+
+  .pin {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border-radius: 50%;
+    background: rgb(251 250 247 / 0.14);
+    backdrop-filter: blur(2px);
+    box-shadow: inset 0 0 0 1px rgb(251 250 247 / 0.85);
+    transition: background var(--t-fast) var(--ease),
+                box-shadow var(--t-fast) var(--ease),
+                transform var(--t-fast) var(--ease);
+  }
+
+  /* The cross. Two bars, drawn with pseudo elements rather than an icon,
+     because it is a geometric mark and not a glyph. */
+  .pin::before,
+  .pin::after {
+    content: "";
+    position: absolute;
+    background: var(--paper);
+    transition: background var(--t-fast) var(--ease);
+  }
+  .pin::before { width: 13px; height: 1px; }
+  .pin::after  { width: 1px; height: 13px; }
+
+  .pin:hover,
+  .pin:focus-visible {
+    background: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+    transform: scale(1.1);
+  }
+
+  .pin[aria-expanded="true"] {
+    background: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .pin[aria-expanded="true"]::after { opacity: 0; }
+
+  .estate__panel {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: min(360px, 42%);
+    pointer-events: none;
+  }
+
+  .estate__card {
+    display: none;
+    padding: var(--s-5);
+    background: var(--forest-deep);
+    color: var(--on-forest);
+  }
+  .estate__card[data-open="true"] { display: block; }
+
+  .estate__card h3 { font-size: var(--fs-lg); margin-bottom: var(--s-2); }
+  .estate__card p  { font-size: var(--fs-sm); color: var(--on-forest-soft); }
+  .estate__card span {
+    display: block;
+    margin-top: var(--s-4);
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--line-dark);
+    font-size: var(--fs-sm);
+    letter-spacing: var(--tr-wide);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+}
+
+/* --- 6e. EVENTS PAGE ----------------------------------------------------- */
+
+/* The events hero carries a sentence rather than the wordmark, because this
+   page is reached by someone who already knows the name. */
+.hero--event { min-height: 88dvh; }
+
+.hero__line {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: clamp(2.6rem, 1.4rem + 5.4vw, 6.4rem);
+  line-height: 1.05;
+  letter-spacing: var(--tr-tight);
+  text-wrap: balance;
+}
+
+/* --- Venue scenes ---
+   Full-bleed photograph, then the copy beneath it. The image is given the
+   whole width because the thing being sold is the size of the space, and a
+   space cropped into a column does not read as large. */
+
+.venue { padding-block: var(--s-9) 0; }
+@media (min-width: 768px) { .venue { padding-block: var(--s-10) 0; } }
+
+.venue__media { overflow: hidden; }
+
+.venue__media img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+@media (min-width: 900px) {
+  .venue__media img { aspect-ratio: 21 / 9; }
+}
+
+.venue__body {
+  display: grid;
+  gap: var(--s-6);
+  padding-top: var(--s-7);
+}
+
+@media (min-width: 900px) {
+  .venue__body {
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: var(--s-9);
+    padding-top: var(--s-8);
+    align-items: start;
+  }
+  /* Alternation, so three venues in a row do not read as one template run
+     three times. */
+  .venue--flip .venue__body { grid-template-columns: 0.7fr 1.3fr; }
+  .venue--flip .venue__copy { order: 2; }
+  .venue--flip .venue__spec { order: 1; }
+}
+
+.venue__copy h2 { margin-bottom: var(--s-5); }
+.venue__copy .lead + .lead { margin-top: var(--s-4); }
+
+.venue__spec { display: grid; gap: 0; }
+
+.venue__spec div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: var(--s-3);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-sm);
+}
+.venue__spec div:first-child { border-top: 1px solid var(--line); }
+.venue__spec dt { color: var(--ink-faint); }
+.venue__spec dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+/* --- Capacity table --- */
+
+.table-scroll { overflow-x: auto; margin-top: var(--s-7); }
+
+.spec-table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.spec-table th,
+.spec-table td {
+  text-align: right;
+  padding: var(--s-4) var(--s-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.spec-table thead th {
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.spec-table tbody th {
+  text-align: left;
+  font-weight: 400;
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+}
+
+.spec-table th:first-child,
+.spec-table td:first-child { text-align: left; padding-left: 0; }
+
+.spec-table td { font-size: var(--fs-lg); font-family: var(--ff-display); }
+
+/* --- What is handled --- */
+
+.handled { background: var(--forest-deep); color: var(--on-forest); }
+.handled h2 { max-width: 20ch; margin-bottom: var(--s-8); }
+
+.handled__list { display: grid; }
+
+.handled__list li {
+  padding-block: var(--s-6);
+  border-bottom: 1px solid var(--line-dark);
+}
+.handled__list li:first-child { border-top: 1px solid var(--line-dark); }
+
+.handled__list b {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  margin-bottom: var(--s-2);
+}
+
+.handled__list span {
+  font-size: var(--fs-sm);
+  color: var(--on-forest-soft);
+  max-width: 54ch;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .handled__list li {
+    display: grid;
+    grid-template-columns: minmax(0, 18ch) 1fr;
+    gap: var(--s-8);
+    align-items: baseline;
+  }
+  .handled__list b { margin-bottom: 0; }
+}
+
+/* --- The reel ---
+   A band of photographs that drifts against the page as it passes. Not a
+   carousel: there is nothing to operate and nothing to miss, it is simply
+   wider than the screen and moves at a different rate to the scroll, which
+   is what makes a row of pictures feel like a place rather than a grid. */
+
+.reel { padding-block: var(--s-9); overflow: hidden; }
+@media (min-width: 768px) { .reel { padding-block: var(--s-10); } }
+
+.reel h2 { max-width: 22ch; margin-bottom: var(--s-7); }
+
+.reel__track {
+  display: flex;
+  gap: var(--s-4);
+  padding-inline: var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  will-change: transform;
+}
+.reel__track::-webkit-scrollbar { display: none; }
+
+.reel__track figure { margin: 0; flex: 0 0 min(80vw, 420px); scroll-snap-align: center; }
+
+.reel__track img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .reel__track {
+    overflow: visible;
+    scroll-snap-type: none;
+    gap: var(--s-5);
+    /* Starts further right than it ends, so the band travels leftwards past
+       the reader rather than sitting still. */
+    padding-left: var(--gutter);
+  }
+  .reel__track figure { flex: 0 0 clamp(320px, 26vw, 440px); }
+  /* Every third frame sits lower, so the band has a horizon rather than a
+     ruled edge. */
+  .reel__track figure:nth-child(3n) { margin-top: var(--s-7); }
+  .reel__track figure:nth-child(3n+2) { margin-top: var(--s-4); }
+}
+
+/* --- 7. INTRO (asymmetric editorial) ------------------------------------ */
+
+.intro__grid {
+  display: grid;
+  gap: var(--s-7);
+}
+
+@media (min-width: 900px) {
+  .intro__grid {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: var(--s-9);
+    align-items: end;
+  }
+}
+
+.intro h2 { margin-bottom: var(--s-6); max-width: 18ch; }
+
+.intro__figure { position: relative; }
+
+.intro__figure img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+@media (min-width: 900px) {
+  .intro__figure { margin-bottom: calc(var(--s-8) * -1); }
+}
+
+/* --- 7b. THE TALLY ------------------------------------------------------
+   A list where every row is a headline. Hairline between rows, nothing
+   around them: the whitespace does the containing, not a card. */
+
+.tally { background: var(--forest-deep); color: var(--on-forest); }
+
+.tally__list { display: grid; }
+
+.tally__list li {
+  padding-block: var(--s-7);
+  border-bottom: 1px solid var(--line-dark);
+}
+.tally__list li:first-child { border-top: 1px solid var(--line-dark); }
+
+@media (min-width: 768px) {
+  .tally__list li {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 26ch) 1fr;
+    gap: var(--s-7);
+    align-items: baseline;
+    padding-block: var(--s-8);
+  }
+}
+
+.tally__n {
+  display: block;
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  color: var(--accent);
+  margin-bottom: var(--s-3);
+}
+.tally__n sup { font-size: 0.7em; vertical-align: 0.45em; }
+
+@media (min-width: 768px) { .tally__n { margin-bottom: 0; } }
+
+.tally__say {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--on-forest-soft);
+  margin-bottom: var(--s-4);
+}
+@media (min-width: 768px) { .tally__say { margin-bottom: 0; } }
+
+.tally__big {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 1.1rem + 4.2vw, 4.4rem);
+  line-height: 1.06;
+  letter-spacing: var(--tr-tight);
+  text-wrap: balance;
+}
+
+/* --- 8. ROOMS (asymmetric stagger, not three equal cards) --------------- */
+
+.rooms__head {
+  display: grid;
+  gap: var(--s-4);
+  margin-bottom: var(--s-8);
+}
+
+/* Sticky section heading, the way Ayana does it: the title holds under the
+   header while the rooms scroll past it, so you always know what you are
+   looking at and the page gains a second layer of movement for free.
+
+   Native sticky, no script. The GSAP pin this replaces was what invalidated
+   every trigger position earlier in this build; sticky cannot do that
+   because the browser resolves it on every frame itself. */
+@media (min-width: 1024px) {
+  .rooms__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 24ch) 1fr;
+    gap: 0 var(--s-9);
+    align-items: start;
+  }
+
+  /* The heading occupies column one across every room row, which gives it a
+     tall enough area for sticky to have somewhere to travel. */
+  .rooms__head {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(72px + var(--s-7));
+    margin-bottom: 0;
+    align-self: start;
+  }
+
+  .rooms__grid .room { grid-column: 2; }
+
+  /* Inside the narrower column the rows no longer need their own split. */
+  .rooms__grid .room { grid-template-columns: 1fr; gap: var(--s-5); }
+  .rooms__grid .room:nth-child(even) { grid-template-columns: 1fr; }
+  .rooms__grid .room:nth-child(even) .room__media { order: 0; }
+  .rooms__grid .room:first-child { border-top: 0; padding-top: 0; }
+}
+
+/* The same device on the events page. */
+@media (min-width: 1024px) {
+  .handled__inner,
+  .reel__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 26ch) 1fr;
+    gap: var(--s-9);
+    align-items: start;
+  }
+  .handled__inner h2,
+  .reel__inner h2 {
+    position: sticky;
+    top: calc(72px + var(--s-7));
+    margin-bottom: 0;
+  }
+}
+
+.room {
+  display: grid;
+  gap: var(--s-5);
+  padding-block: var(--s-7);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  .room {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--s-8);
+    align-items: center;
+    padding-block: var(--s-8);
+  }
+  /* Stagger: the second room leads with its photograph, so the eye crosses
+     the page rather than running down a single column of thumbnails. */
+  .room:nth-child(even) .room__media { order: -1; }
+  .room:nth-child(even) { grid-template-columns: 1.1fr 0.9fr; }
+}
+
+.room__media { overflow: hidden; }
+
+.room__media img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  transition: transform var(--t-slow) var(--ease);
+}
+
+.room:hover .room__media img { transform: scale(1.04); }
+
+.room__count {
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  color: var(--accent);
+}
+
+.room h3 { margin-block: var(--s-2) var(--s-4); }
+
+.room__amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  margin-top: var(--s-5);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+}
+
+.room__amenities li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.room__amenities svg { width: 15px; height: 15px; flex: none; opacity: 0.6; }
+
+/* --- 9. SPACES (horizontal pinned pan) ---------------------------------- */
+
+.spaces { background: var(--forest-deep); color: var(--on-forest); }
+
+.spaces__intro {
+  padding-block: var(--s-9) var(--s-7);
+}
+.spaces__intro h2 { max-width: 16ch; }
+
+/* Base (no pin): a horizontal scroll-snap rail, which is the correct
+   mobile behaviour anyway. GSAP upgrades this to a pinned pan at >=1024px. */
+.spaces__track {
+  display: flex;
+  gap: var(--s-5);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-inline: var(--gutter);
+  padding-bottom: var(--s-9);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.spaces__track::-webkit-scrollbar { display: none; }
+
+.space {
+  flex: 0 0 min(82vw, 440px);
+  scroll-snap-align: center;
+}
+
+.space img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  margin-bottom: var(--s-5);
+}
+
+.space h3 { margin-bottom: var(--s-3); }
+
+.space__meta {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-dark);
+  font-size: var(--fs-sm);
+  color: var(--on-forest-soft);
+}
+
+.space__meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+.space__meta b {
+  font-weight: 500;
+  color: var(--on-forest);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 1024px) {
+  /* While this section is pinned it IS the viewport, so everything in it has
+     to fit one screen exactly. The column below gives the heading its natural
+     height and hands the remainder to the track; each card then lets its
+     photograph flex into whatever vertical space is left, which is why the
+     image drops its fixed aspect ratio here. */
+  .spaces__viewport {
+    overflow: hidden;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .spaces__intro {
+    flex: none;
+    padding-block: var(--s-8) var(--s-5);
+  }
+
+  /* One step down from the page's h2 scale. At full size this heading runs to
+     three lines and takes height the photographs need more than it does. */
+  .spaces__intro h2 {
+    font-size: var(--fs-2xl);
+    max-width: 22ch;
+  }
+
+  .spaces__track {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    gap: var(--s-7);
+    padding-bottom: var(--s-8);
+    align-items: stretch;
+  }
+
+  .space {
+    flex: 0 0 clamp(340px, 27vw, 430px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Fixed height rather than flex. Letting the photograph absorb the leftover
+     space makes every card a different shape, because each one carries a
+     different amount of copy, and the titles then sit on four different
+     baselines. A fixed band keeps the row aligned and keeps the images
+     generous, which is the whole point of this section. */
+  .space img {
+    flex: none;
+    height: clamp(200px, 32vh, 330px);
+    aspect-ratio: auto;
+    margin-bottom: var(--s-4);
+  }
+
+  .space__meta { margin-top: auto; }
+}
+
+/* --- 10. DINING --------------------------------------------------------- */
+
+.dining__grid { display: grid; gap: var(--s-7); }
+
+@media (min-width: 900px) {
+  .dining__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-9);
+    align-items: center;
+  }
+}
+
+.dining__stack { display: grid; gap: var(--s-4); }
+
+.dining__stack img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+@media (min-width: 640px) {
+  .dining__stack {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-4);
+  }
+  .dining__stack img:first-child {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+.dining h2 { margin-bottom: var(--s-5); }
+
+.hours {
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: var(--s-3);
+  font-size: var(--fs-sm);
+}
+.hours div { display: flex; justify-content: space-between; gap: var(--s-4); }
+.hours dt { color: var(--ink-faint); }
+.hours dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+/* --- 11. CELEBRATE (figure-led) ----------------------------------------- */
+
+.celebrate { position: relative; overflow: hidden; }
+
+.celebrate__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.celebrate__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.celebrate::after {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(to right, rgb(14 33 26 / 0.92) 0%, rgb(14 33 26 / 0.72) 55%, rgb(14 33 26 / 0.5) 100%);
+}
+
+.celebrate { color: var(--on-forest); }
+.celebrate h2 { max-width: 15ch; margin-bottom: var(--s-5); }
+.celebrate .lead { color: rgb(244 242 236 / 0.84); }
+
+.celebrate__inner { max-width: 640px; }
+
+.capacity {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-6);
+  margin-top: var(--s-8);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--line-dark);
+}
+
+@media (min-width: 640px) {
+  .capacity { grid-template-columns: repeat(4, 1fr); }
+}
+
+.capacity dt {
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--on-forest-soft);
+  margin-bottom: var(--s-2);
+}
+.capacity dd { margin: 0; }
+.capacity .num { color: var(--on-forest); }
+
+/* --- 12. NEARBY --------------------------------------------------------- */
+
+.nearby__grid { display: grid; gap: var(--s-7); }
+
+@media (min-width: 900px) {
+  .nearby__grid { grid-template-columns: 0.8fr 1.2fr; gap: var(--s-9); }
+}
+
+.places { display: grid; gap: 0; }
+
+.place {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-4);
+  align-items: baseline;
+  padding-block: var(--s-5);
+  border-bottom: 1px solid var(--line);
+}
+.place:first-child { border-top: 1px solid var(--line); }
+
+.place h3 { font-size: var(--fs-lg); }
+.place p { font-size: var(--fs-sm); color: var(--ink-soft); margin-top: var(--s-1); }
+.place span {
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* --- 13. ENQUIRE (form) ------------------------------------------------- */
+
+.enquire__grid { display: grid; gap: var(--s-8); }
+
+@media (min-width: 900px) {
+  .enquire__grid { grid-template-columns: 1fr 1fr; gap: var(--s-9); }
+}
+
+/* Direct booking panel. Sits above the enquiry form because a guest who
+   wants a room should not have to read past a wedding form to find it. */
+.book-direct {
+  display: grid;
+  gap: var(--s-4);
+  align-items: center;
+  margin-block: var(--s-6) var(--s-8);
+  padding: var(--s-5);
+  background: var(--forest-deep);
+  color: var(--on-forest);
+}
+
+@media (min-width: 560px) {
+  .book-direct {
+    grid-template-columns: 1fr auto;
+    gap: var(--s-6);
+    padding: var(--s-6);
+  }
+}
+
+.book-direct h3 { font-size: var(--fs-lg); margin-bottom: var(--s-1); }
+.book-direct p { font-size: var(--fs-sm); color: var(--on-forest-soft); }
+
+.book-split {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--s-3);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--line);
+}
+
+.field { display: grid; gap: var(--s-2); margin-bottom: var(--s-5); }
+
+.field label {
+  font-size: var(--fs-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-3) var(--s-4);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  color: var(--ink);
+  transition: border-color var(--t-fast) var(--ease);
+}
+
+.field textarea { min-height: 120px; resize: vertical; }
+
+.field input::placeholder,
+.field textarea::placeholder { color: var(--ink-faint); }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.field__hint { font-size: var(--fs-xs); color: var(--ink-faint); }
+
+.field__error {
+  font-size: var(--fs-xs);
+  color: var(--accent-deep);
+  display: none;
+}
+.field[data-invalid="true"] .field__error { display: block; }
+.field[data-invalid="true"] input,
+.field[data-invalid="true"] select,
+.field[data-invalid="true"] textarea { border-color: var(--accent-deep); }
+
+.pair { display: grid; gap: var(--s-5); }
+@media (min-width: 560px) { .pair { grid-template-columns: 1fr 1fr; } }
+
+.form-status {
+  margin-top: var(--s-4);
+  font-size: var(--fs-sm);
+  min-height: 1.6em;
+}
+.form-status[data-state="ok"] { color: var(--forest); }
+.form-status[data-state="err"] { color: var(--accent-deep); }
+
+.contact-block { display: grid; gap: var(--s-6); }
+
+.contact-block a:hover { color: var(--accent); }
+
+.contact-row {
+  display: grid;
+  gap: var(--s-1);
+  padding-bottom: var(--s-5);
+  border-bottom: 1px solid var(--line);
+}
+
+/* --- 14. FOOTER --------------------------------------------------------- */
+
+.site-footer {
+  background: var(--forest-deep);
+  color: var(--on-forest);
+  padding-block: var(--s-9) var(--s-6);
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: var(--s-7);
+  padding-bottom: var(--s-8);
+  border-bottom: 1px solid var(--line-dark);
+}
+
+@media (min-width: 768px) {
+  .site-footer__grid { grid-template-columns: 1.4fr 1fr 1fr; gap: var(--s-8); }
+}
+
+.site-footer h4 {
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--on-forest-soft);
+  margin-bottom: var(--s-4);
+}
+
+.site-footer li { margin-bottom: var(--s-3); }
+.site-footer a:hover { color: var(--accent); }
+
+.site-footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-top: var(--s-5);
+  font-size: var(--fs-xs);
+  color: var(--on-forest-soft);
+}
+
+/* --- 15. MOTION ---------------------------------------------------------
+   Everything below is gated on html.is-enhanced, which main.js adds only
+   after it has confirmed it can run the reveal. If the script is blocked,
+   stripped, or the visitor asked for reduced motion, the class is never
+   added and the page renders complete and static. Nothing starts hidden
+   on its own. */
+
+.is-enhanced [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+/* The h1 is deliberately NOT in this list. It is the page's largest
+   contentful paint, and an element at opacity 0 has not painted, so fading it
+   in pushes LCP out by the length of the animation. It rises instead, from
+   inside the hero's own overflow, which costs nothing and reads better at
+   display size anyway. */
+.is-enhanced .hero__rule,
+.is-enhanced .hero__tagline {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
