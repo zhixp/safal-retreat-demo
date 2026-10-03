@@ -67,6 +67,69 @@
     });
   }
 
+  /* --- The property film ------------------------------------------------
+     Nothing downloads until the band is close. A 5.7 MB file has no business
+     being fetched by someone who reads the first screen and leaves.
+
+     Autoplay is muted, looped and inline, which is the only combination
+     mobile browsers honour. Reduced motion means the poster frame and a
+     play control instead, because an unstoppable moving image is exactly
+     what that setting exists to prevent. */
+
+  const film = document.getElementById("propertyFilm");
+  const filmToggle = document.getElementById("filmToggle");
+
+  if (film) {
+    const source = film.querySelector("source[data-src]");
+    const wantsStill = reduce.matches;
+
+    const load = () => {
+      if (!source || source.src) return;
+      source.src = source.dataset.src;
+      film.load();
+      if (!wantsStill) film.play().catch(() => {});
+    };
+
+    new IntersectionObserver(
+      ([entry], obs) => {
+        if (!entry.isIntersecting) return;
+        obs.disconnect();
+        load();
+      },
+      { rootMargin: "300px 0px" }
+    ).observe(film);
+
+    // Off screen means off. No reason to decode frames nobody is looking at.
+    new IntersectionObserver(
+      ([entry]) => {
+        if (!source || !source.src || wantsStill) return;
+        if (entry.isIntersecting) film.play().catch(() => {});
+        else film.pause();
+      },
+      { threshold: 0.1 }
+    ).observe(film);
+
+    if (filmToggle) {
+      const sync = () => {
+        const playing = !film.paused;
+        filmToggle.setAttribute("aria-pressed", String(playing));
+        filmToggle.querySelector(".film__toggle-label").textContent =
+          playing ? "Pause" : "Play";
+      };
+
+      filmToggle.addEventListener("click", () => {
+        load();
+        if (film.paused) film.play().catch(() => {});
+        else film.pause();
+        sync();
+      });
+
+      film.addEventListener("play", sync);
+      film.addEventListener("pause", sync);
+      if (wantsStill) sync();
+    }
+  }
+
   /* --- The dock ---------------------------------------------------------
      Book and Enquire, pinned once the hero has gone. Kept out of the way
      while the hero is on screen, because the hero carries the availability

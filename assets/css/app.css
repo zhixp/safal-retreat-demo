@@ -409,8 +409,29 @@ p { text-wrap: pretty; }
 }
 
 .hero__inner {
+  position: relative;
   width: 100%;
   text-align: center;
+}
+
+/* The page scrim is a vertical gradient, which is weakest across the middle
+   of the frame, and the middle of this frame is a canopy of lights. A soft
+   pool behind the copy itself guarantees the contrast wherever the
+   photograph happens to be bright. Sits behind the text, catches no clicks. */
+.hero__inner::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: min(1100px, 92vw);
+  height: 150%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgb(14 33 26 / 0.62) 0%,
+    rgb(14 33 26 / 0.34) 45%,
+    rgb(14 33 26 / 0) 72%);
 }
 
 /* The wordmark, set rather than written. Inscriptional caps at display size
@@ -429,12 +450,14 @@ p { text-wrap: pretty; }
   text-transform: none;
 }
 
+/* The wordmark's own line box carries descender space the eye reads as a
+   gap, so the rule sits closer than the raw numbers suggest it should. */
 .hero__rule {
   display: block;
-  width: 64px;
+  width: 56px;
   height: 1px;
-  margin: var(--s-6) auto var(--s-5);
-  background: rgb(244 242 236 / 0.55);
+  margin: var(--s-4) auto var(--s-4);
+  background: rgb(244 242 236 / 0.6);
 }
 
 .hero__tagline {
@@ -551,6 +574,35 @@ p { text-wrap: pretty; }
   .dock { left: var(--s-4); right: var(--s-4); }
   .dock .btn { flex: 1 1 0; padding-inline: var(--s-3); }
   body { padding-bottom: 84px; }
+
+  /* Touch targets.
+
+     A phone number and a footer link are discrete things a thumb goes for,
+     not prose, so the inline-link exception does not cover them. At 23px
+     tall they were half the size a thumb needs. Making them block level with
+     vertical padding gets them to 44 without changing how they look, since
+     the padding is inside an already-transparent box.
+
+     The contact column loses its own row gaps to compensate, so the section
+     does not grow taller just because the targets grew. */
+  .site-footer li { margin-bottom: 0; }
+  .site-footer li a,
+  .contact-row a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .contact-row p { margin: 0; }
+  .contact-row { gap: 0; }
+
+  .drawer__foot a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .brand { min-height: 44px; align-items: center; }
 }
 
 @media (min-width: 768px) {
@@ -761,6 +813,20 @@ p { text-wrap: pretty; }
   font-variant-numeric: tabular-nums;
 }
 
+/* At phone width the 420px floor forced a sideways scroll inside the table,
+   and a table you have to discover you can drag is a table most people will
+   not read. Three columns do fit at 375 once the headers are allowed to
+   wrap, so below 560 they are. */
+@media (max-width: 559px) {
+  .spec-table { min-width: 0; }
+  .spec-table th,
+  .spec-table td { padding: var(--s-3) var(--s-2); }
+  .spec-table thead th { font-size: var(--fs-xs); letter-spacing: 0.08em; }
+  .spec-table tbody th { font-size: var(--fs-base); }
+  /* A measurement that breaks across two lines stops reading as one value. */
+  .spec-table td { font-size: var(--fs-sm); white-space: nowrap; }
+}
+
 .spec-table th,
 .spec-table td {
   text-align: right;
@@ -903,6 +969,52 @@ p { text-wrap: pretty; }
   .intro__figure { margin-bottom: calc(var(--s-8) * -1); }
 }
 
+/* --- 7a. THE FILM -------------------------------------------------------
+   Held at a width the source resolution can actually carry. */
+
+.film { padding-block: var(--s-8); }
+
+.film__frame {
+  position: relative;
+  margin: 0 auto;
+  max-width: 860px;
+}
+
+.film__video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: var(--forest-deep);
+  display: block;
+}
+
+.film__frame figcaption {
+  margin-top: var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* A moving image the visitor cannot stop is an accessibility failure, not a
+   design choice, so the control is always there rather than on hover. */
+/* Bottom left, not bottom right: the dock lives in the bottom right corner
+   of the viewport and the two were landing on top of each other. */
+.film__toggle {
+  position: absolute;
+  left: var(--s-3);
+  bottom: calc(var(--s-3) + 2.4rem);
+  min-height: 40px;
+  padding: var(--s-2) var(--s-4);
+  background: rgb(14 33 26 / 0.72);
+  color: var(--on-forest);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  transition: background var(--t-fast) var(--ease);
+}
+.film__toggle:hover { background: var(--forest-deep); }
+
 /* --- 7b. THE TALLY ------------------------------------------------------
    A list where every row is a headline. Hairline between rows, nothing
    around them: the whitespace does the containing, not a card. */
@@ -974,8 +1086,8 @@ p { text-wrap: pretty; }
 @media (min-width: 1024px) {
   .rooms__grid {
     display: grid;
-    grid-template-columns: minmax(0, 24ch) 1fr;
-    gap: 0 var(--s-9);
+    grid-template-columns: minmax(0, 15rem) 1fr;
+    gap: 0 var(--s-8);
     align-items: start;
   }
 
@@ -990,13 +1102,33 @@ p { text-wrap: pretty; }
     align-self: start;
   }
 
-  .rooms__grid .room { grid-column: 2; }
+  /* Two steps down from the page's h2. At the full display scale this line
+     broke into seven lines of one and two words each inside a column this
+     narrow, which is not a headline, it is a column of rubble. A sticky
+     label does not need to be the loudest thing on the screen; the rooms
+     beside it are. */
+  .rooms__head h2 {
+    font-size: var(--fs-lg);
+    line-height: 1.22;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
 
-  /* Inside the narrower column the rows no longer need their own split. */
-  .rooms__grid .room { grid-template-columns: 1fr; gap: var(--s-5); }
-  .rooms__grid .room:nth-child(even) { grid-template-columns: 1fr; }
-  .rooms__grid .room:nth-child(even) .room__media { order: 0; }
-  .rooms__grid .room:first-child { border-top: 0; padding-top: 0; }
+  /* Inside column two each room keeps its own split, so the photograph and
+     the description sit side by side instead of stacking into a tall ribbon
+     with the text stranded above the fold. */
+  .rooms__grid .room {
+    grid-column: 2;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: var(--s-7);
+    align-items: center;
+    padding-block: var(--s-7);
+  }
+  .rooms__grid .room:nth-child(even) { grid-template-columns: 1.05fr 0.95fr; }
+  .rooms__grid .room:nth-child(even) .room__media { order: -1; }
+  .rooms__grid .room:first-of-type { border-top: 0; padding-top: 0; }
+
+  .rooms__grid .room__media img { aspect-ratio: 4 / 3; }
 }
 
 /* The same device on the events page. */

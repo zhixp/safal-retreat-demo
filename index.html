@@ -20,8 +20,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/img/banner-3.jpg" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&family=Marcellus&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css?v=7">
-<link rel="stylesheet" href="assets/css/app.css?v=7">
+<link rel="stylesheet" href="assets/css/tokens.css?v=13">
+<link rel="stylesheet" href="assets/css/app.css?v=13">
 
 <script type="application/ld+json">
 {
@@ -196,6 +196,33 @@
         </figure>
       </div>
 
+    </div>
+  </section>
+
+  <!-- THE FILM -------------------------------------------------------------
+       The hotel's own property film. It is 638 by 360, which is why it sits
+       in a held frame rather than running full bleed: stretched across a
+       1920 hero it would look softer than the photographs around it and
+       cheapen everything next to it. At this width it is close to native and
+       stays sharp.
+
+       Nothing downloads until the band is near the viewport. main.js swaps
+       data-src onto the source element and starts playback then. -->
+  <section class="section film" aria-labelledby="film-h">
+    <div class="wrap">
+      <h2 id="film-h" class="sr">The property in motion</h2>
+      <figure class="film__frame" data-reveal>
+        <video id="propertyFilm" class="film__video"
+               muted loop playsinline preload="none"
+               poster="assets/img/safal-facade-30-1.jpg"
+               aria-label="A short film of the property, its grounds and the lake">
+          <source data-src="assets/video/safal-mini.mp4" type="video/mp4">
+        </video>
+        <button class="film__toggle" type="button" id="filmToggle" aria-pressed="true">
+          <span class="film__toggle-label">Pause</span>
+        </button>
+        <figcaption>The property, the grounds and the water, filmed by the house.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -662,7 +689,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="assets/js/water.js?v=7" type="module"></script>
-<script src="assets/js/main.js?v=7" defer></script>
+<script src="assets/js/water.js?v=13" type="module"></script>
+<script src="assets/js/main.js?v=13" defer></script>
 </body>
 </html>

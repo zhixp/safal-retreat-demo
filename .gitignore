@@ -11,3 +11,7 @@ desktop.ini
 _opt/
 _o/
 *.log
+
+# The property film is 5.7 MB and lives on the client's CDN already.
+# Uncomment the ignore if the repo should stay light.
+# assets/video/
