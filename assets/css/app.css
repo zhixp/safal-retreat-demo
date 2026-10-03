@@ -389,6 +389,82 @@ p { text-wrap: pretty; }
   object-fit: cover;
 }
 
+/* Scrim. Two layers, because the hero now cycles five photographs that run
+   from a night lawn to a daylight field to a cream banquet hall. Measured
+   against the bare images the wordmark sat at 2.72:1, below even the large
+   text threshold, so neither layer is decorative.
+
+   The vertical gradient handles the frame. It is weakest across the middle,
+   which is exactly where the type sits, so a second radial pool follows the
+   copy and guarantees the contrast wherever the photograph is bright. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(to top,
+      rgb(14 33 26 / 0.88) 0%,
+      rgb(14 33 26 / 0.38) 45%,
+      rgb(14 33 26 / 0.50) 100%);
+}
+
+.hero__inner {
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.hero__inner::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: min(1100px, 92vw);
+  height: 150%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgb(14 33 26 / 0.55) 0%,
+    rgb(14 33 26 / 0.38) 45%,
+    rgb(14 33 26 / 0) 72%);
+}
+
+/* The wordmark, set rather than written. Inscriptional caps at display size
+   with the tracking opened up: the letters are meant to sit like lettering
+   cut into a lintel, which is why the face is Marcellus and not the body
+   serif scaled up. */
+.wordmark {
+  font-family: var(--ff-wordmark);
+  font-weight: 400;
+  font-size: var(--fs-display);
+  line-height: 1.02;
+  letter-spacing: 0.08em;
+  /* Tracking adds space after the final letter too, which pushes a centred
+     line visually off centre. */
+  text-indent: 0.08em;
+  text-transform: none;
+}
+
+.hero__rule {
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: var(--s-4) auto;
+  background: rgb(244 242 236 / 0.6);
+}
+
+.hero__tagline {
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  text-indent: var(--tr-caps);
+  color: rgb(244 242 236 / 0.92);
+}
+
 /* --- Hero slideshow ---
    Crossfade only. The wordmark stays put and the property changes behind it,
    which is the version of this that reads as confident; sliding the type
@@ -426,144 +502,6 @@ p { text-wrap: pretty; }
 @media (prefers-reduced-motion: reduce) {
   .hero__slide { transition: none; }
   .is-enhanced .hero__slide.is-active img { animation: none; }
-}
-
-/* --- Hero controls ---
-   Previous, caption, pause, next. Real buttons, 44px targets, and the
-   rotation stops on hover, on focus and for reduced motion. A hero that
-   changes under you with no way to stop it is the most common accessibility
-   failure on hotel sites. */
-
-.hero__controls {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--s-9) + var(--s-4));
-  translate: -50% 0;
-  z-index: var(--z-raised);
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  max-width: calc(100% - var(--gutter) * 2);
-}
-
-.hero__arrow,
-.hero__play {
-  display: grid;
-  place-items: center;
-  min-width: 44px;
-  min-height: 44px;
-  padding-inline: var(--s-3);
-  color: var(--on-forest);
-  background: rgb(14 33 26 / 0.42);
-  backdrop-filter: blur(3px);
-  box-shadow: inset 0 0 0 1px rgb(244 242 236 / 0.26);
-  transition: background var(--t-fast) var(--ease);
-}
-.hero__arrow:hover,
-.hero__play:hover { background: rgb(14 33 26 / 0.78); }
-
-.hero__play {
-  font-size: var(--fs-xs);
-  letter-spacing: var(--tr-wide);
-  text-transform: uppercase;
-}
-
-.hero__caption {
-  flex: 0 1 auto;
-  min-width: 0;
-  padding-inline: var(--s-4);
-  font-size: var(--fs-sm);
-  color: rgb(244 242 236 / 0.92);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0 1px 12px rgb(14 33 26 / 0.9);
-}
-
-@media (max-width: 639px) {
-  .hero__caption { display: none; }
-  .hero__controls { bottom: calc(var(--s-8) + var(--s-2)); }
-}
-
-.hero__media canvas {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 1.2s var(--ease);
-}
-.hero__media canvas.is-live { opacity: 1; }
-
-/* Scrim. Two stops so the headline holds AA contrast over any frame of the
-   photograph, including the bright sky at the top of the facade shot. */
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(to top, rgb(14 33 26 / 0.86) 0%, rgb(14 33 26 / 0.28) 45%, rgb(14 33 26 / 0.44) 100%);
-}
-
-.hero__inner {
-  position: relative;
-  width: 100%;
-  text-align: center;
-}
-
-/* The page scrim is a vertical gradient, which is weakest across the middle
-   of the frame, and the middle of this frame is a canopy of lights. A soft
-   pool behind the copy itself guarantees the contrast wherever the
-   photograph happens to be bright. Sits behind the text, catches no clicks. */
-.hero__inner::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
-  width: min(1100px, 92vw);
-  height: 150%;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center,
-    rgb(14 33 26 / 0.62) 0%,
-    rgb(14 33 26 / 0.34) 45%,
-    rgb(14 33 26 / 0) 72%);
-}
-
-/* The wordmark, set rather than written. Inscriptional caps at display size
-   with the tracking opened right up: the letters are meant to sit like
-   lettering cut into a lintel, which is why the face is Marcellus and not
-   the body serif scaled up. */
-.wordmark {
-  font-family: var(--ff-wordmark);
-  font-weight: 400;
-  font-size: var(--fs-display);
-  line-height: 1.02;
-  letter-spacing: 0.08em;
-  /* Optical correction. Tracking adds space after the final letter too,
-     which pushes a centred line visually off-centre. */
-  text-indent: 0.08em;
-  text-transform: none;
-}
-
-/* The wordmark's own line box carries descender space the eye reads as a
-   gap, so the rule sits closer than the raw numbers suggest it should. */
-.hero__rule {
-  display: block;
-  width: 56px;
-  height: 1px;
-  margin: var(--s-4) auto var(--s-4);
-  background: rgb(244 242 236 / 0.6);
-}
-
-.hero__tagline {
-  font-family: var(--ff-body);
-  font-size: var(--fs-sm);
-  font-weight: 400;
-  letter-spacing: var(--tr-caps);
-  text-transform: uppercase;
-  text-indent: var(--tr-caps);
-  color: rgb(244 242 236 / 0.9);
 }
 
 /* --- 6b. AVAILABILITY BAR -----------------------------------------------
@@ -1321,12 +1259,27 @@ p { text-wrap: pretty; }
 }
 
 @media (min-width: 1024px) {
-  /* While this section is pinned it IS the viewport, so everything in it has
-     to fit one screen exactly. The column below gives the heading its natural
-     height and hands the remainder to the track; each card then lets its
-     photograph flex into whatever vertical space is left, which is why the
-     image drops its fixed aspect ratio here. */
+  /* Native sticky, not a JavaScript pin.
+
+     The pin this replaces injected its spacer element after load and shoved
+     everything below it down the page: measured CLS 1.74, against a budget
+     of 0.1. The scroll distance now lives in CSS on the scroller, so it is
+     reserved from the first paint and nothing moves. The browser resolves
+     sticky per frame, so it also cannot hold a stale position the way a
+     measured pin can.
+
+     While the viewport is stuck it IS the screen, so everything inside has
+     to fit one exactly: the heading takes its natural height and hands the
+     remainder to the track. */
+  /* 100vh holds the section on screen; the remaining 55vh is the scroll the
+     pan is spread across. The track travels roughly 400px at this width, so
+     a little over half a screen of scroll keeps the movement close to one to
+     one with the wheel. At 230vh it crawled. */
+  .spaces__scroller { height: 155vh; }
+
   .spaces__viewport {
+    position: sticky;
+    top: 0;
     overflow: hidden;
     height: 100dvh;
     display: flex;

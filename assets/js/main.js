@@ -68,30 +68,30 @@
   }
 
   /* --- Hero slideshow ---------------------------------------------------
-     Five frames of the property behind a wordmark that does not move.
+     Five frames of the property, changing on their own behind a wordmark
+     that does not move. No controls: the photographs are the backdrop, the
+     text over them never shifts, and a row of arrows under a hotel's name
+     makes the page look like a widget.
 
-     The first frame ships in the markup with its own src so it is the LCP
-     image and is never waiting on this script. The other four carry
-     data-src and are fetched one ahead of where the viewer is, so opening
-     the page costs one photograph rather than five.
+     The first frame ships in the markup with its own src, so it is the LCP
+     image and never waits on this script. The other four carry data-src and
+     are fetched one ahead of where the viewer is, so opening the page costs
+     one photograph rather than five.
 
-     It stops on hover, on focus anywhere inside the hero, when the tab is
-     hidden, when the hero scrolls away, and permanently if the visitor asks
-     for reduced motion. All four of those are cases where a picture
-     changing by itself is either wasted or unwanted. */
+     It holds still in the three cases where moving is either unwanted or
+     wasted: the visitor asked for reduced motion, the tab is in the
+     background, or the hero has scrolled away. The reduced motion case is
+     why there is no visible pause button to miss; the people who need the
+     motion stopped get it stopped without having to find a control. */
 
   const slideWrap = document.getElementById("heroSlides");
 
   if (slideWrap) {
     const slides = [...slideWrap.querySelectorAll(".hero__slide")];
-    const caption = document.getElementById("heroCaption");
-    const playBtn = document.getElementById("heroPlay");
-    const heroEl = document.querySelector(".hero");
-    const DWELL = 6500;
+    const DWELL = 6000;
 
     let index = 0;
     let timer = null;
-    let wantsAuto = !reduce.matches;
     let onScreen = true;
 
     const preload = (i) => {
@@ -101,69 +101,40 @@
       delete img.dataset.src;
     };
 
-    // One ahead is enough to make the next change seamless.
-    preload(1);
-
     const go = (next) => {
       index = (next + slides.length) % slides.length;
       slides.forEach((s, i) => s.classList.toggle("is-active", i === index));
-      if (caption) caption.textContent = slides[index].dataset.caption || "";
       preload((index + 1) % slides.length);
+      // water.js owns the visible crossfade when the shader is running, so
+      // it has to be told which frame we moved to.
+      window.dispatchEvent(new CustomEvent("hero:slide", { detail: { index } }));
     };
 
     const stop = () => { clearInterval(timer); timer = null; };
 
     const start = () => {
       stop();
-      if (!wantsAuto || !onScreen) return;
+      if (reduce.matches || !onScreen || document.hidden) return;
       timer = setInterval(() => go(index + 1), DWELL);
     };
 
-    const setAuto = (on) => {
-      wantsAuto = on;
-      if (playBtn) {
-        playBtn.setAttribute("aria-pressed", String(on));
-        playBtn.querySelector(".hero__play-label").textContent = on ? "Pause" : "Play";
-      }
-      on ? start() : stop();
-    };
+    // One ahead is enough to make the next change seamless.
+    preload(1);
 
-    document.querySelectorAll("[data-slide]").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        go(index + (btn.dataset.slide === "next" ? 1 : -1));
-        // A deliberate step means they are driving now; don't yank it back.
-        setAuto(false);
-      })
-    );
-
-    playBtn?.addEventListener("click", () => setAuto(!wantsAuto));
-
-    // Pause while a pointer or the keyboard is inside the hero, so nothing
-    // moves under someone who is reading or tabbing through the controls.
-    ["pointerenter", "focusin"].forEach((ev) =>
-      heroEl?.addEventListener(ev, stop)
-    );
-    ["pointerleave", "focusout"].forEach((ev) =>
-      heroEl?.addEventListener(ev, () => { if (wantsAuto) start(); })
-    );
-
-    // A hidden tab freezes rAF anyway; this stops the interval queueing up
-    // changes nobody saw.
     document.addEventListener("visibilitychange", () =>
-      document.hidden ? stop() : (wantsAuto && onScreen && start())
+      document.hidden ? stop() : start()
     );
 
     new IntersectionObserver(
-      ([entry]) => {
-        onScreen = entry.isIntersecting;
-        onScreen && wantsAuto ? start() : stop();
-      },
+      ([entry]) => { onScreen = entry.isIntersecting; start(); },
       { threshold: 0.2 }
     ).observe(slideWrap);
 
-    reduce.addEventListener("change", (e) => { if (e.matches) setAuto(false); });
+    // Someone who turns reduced motion on mid-session should not have to
+    // reload to be taken seriously.
+    reduce.addEventListener("change", (e) => (e.matches ? stop() : start()));
 
-    setAuto(wantsAuto);
+    start();
   }
 
   /* --- The dock ---------------------------------------------------------
@@ -497,28 +468,33 @@
        outdoor spaces you walk between, so the section moves sideways rather
        than stacking them into a vertical list of cards.
 
+       The holding is done by CSS sticky and the scroll distance is reserved
+       by the scroller's height, so this tween only moves the track. It does
+       NOT pin: the pin it replaces injected a spacer after load and pushed
+       the rest of the page down, which measured CLS 1.74 against a budget
+       of 0.1.
+
        Desktop only. Below 1024 the track is already a native scroll-snap
        rail, which is the better interaction on a phone and needs no script. */
 
-    const viewport = document.getElementById("spacesViewport");
-    const track    = document.getElementById("spacesTrack");
+    const scroller = document.getElementById("spacesScroller");
+    const track = document.getElementById("spacesTrack");
 
-    if (viewport && track) {
+    if (scroller && track) {
       ScrollTrigger.matchMedia({
         "(min-width: 1024px)": () => {
-          const distance = () => track.scrollWidth - window.innerWidth + 80;
+          const distance = () =>
+            Math.max(0, track.scrollWidth - window.innerWidth + 80);
 
           const tween = gsap.to(track, {
             x: () => -distance(),
             ease: "none",
             scrollTrigger: {
-              trigger: viewport,
+              trigger: scroller,
               start: "top top",
-              end: () => "+=" + distance(),
-              pin: true,
+              end: "bottom bottom",
               scrub: 0.8,
               invalidateOnRefresh: true,
-              anticipatePin: 1,
             },
           });
 
