@@ -20,8 +20,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/img/banner-3.jpg" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&family=Marcellus&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css?v=13">
-<link rel="stylesheet" href="assets/css/app.css?v=13">
+<link rel="stylesheet" href="assets/css/tokens.css?v=14">
+<link rel="stylesheet" href="assets/css/app.css?v=14">
 
 <script type="application/ld+json">
 {
@@ -118,21 +118,64 @@
 <main id="main">
 
   <!-- HERO ----------------------------------------------------------------
-       The photograph is the content. The canvas above it carries a slow
-       water refraction, because the lake is the reason this property
-       exists and it should be felt before anything is read. -->
+       Five frames of the property, crossfading behind a wordmark that does
+       not move. The first ships with its own src so it is the LCP image;
+       the rest load one ahead of the viewer. Controls sit at the bottom of
+       the frame and the rotation stops on hover, on focus, off screen and
+       for reduced motion. -->
   <section class="hero">
     <div class="hero__media">
-      <img src="assets/img/banner-3.jpg"
-           alt="Angan Lawn at night, set for a wedding under a canopy of string lights, with the hotel lit behind"
-           width="1920" height="1000" fetchpriority="high" id="heroImage">
-      <canvas id="heroCanvas" aria-hidden="true"></canvas>
+      <div class="hero__slides" id="heroSlides">
+        <figure class="hero__slide is-active" data-caption="Angan Lawn, on the night of a wedding">
+          <img src="assets/img/banner-3.jpg"
+               alt="Angan Lawn at night, set for a wedding under a canopy of string lights"
+               width="1920" height="1000" fetchpriority="high" id="heroImage">
+        </figure>
+        <figure class="hero__slide" data-caption="The lawn by day, the lake past the tree line">
+          <img data-src="assets/img/safal-lawn-30-4.jpg"
+               alt="Angan Lawn in daylight, open grass running to the tree line"
+               width="1600" height="1067" loading="lazy">
+        </figure>
+        <figure class="hero__slide" data-caption="The Banquet Hall, laid for a reception">
+          <img data-src="assets/img/banner-2.jpg"
+               alt="The banquet hall under chandeliers, round tables laid for a reception"
+               width="1920" height="1000" loading="lazy">
+        </figure>
+        <figure class="hero__slide" data-caption="Neembry, after dark">
+          <img data-src="assets/img/banner-5.jpg"
+               alt="The Neembry restaurant at night, wooden tables under bamboo blinds"
+               width="1920" height="1000" loading="lazy">
+        </figure>
+        <figure class="hero__slide" data-caption="A Premium room">
+          <img data-src="assets/img/safal-rooms-30-1.jpg"
+               alt="A Premium room with the bed facing the window"
+               width="1600" height="1067" loading="lazy">
+        </figure>
+      </div>
     </div>
 
     <div class="wrap hero__inner">
       <h1 class="wordmark">Safal Retreat</h1>
       <span class="hero__rule" aria-hidden="true"></span>
       <p class="hero__tagline">The quiet side of the lake</p>
+    </div>
+
+    <div class="hero__controls" role="group" aria-label="Property images">
+      <button class="hero__arrow" type="button" data-slide="prev" aria-controls="heroSlides">
+        <span class="sr">Previous image</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <p class="hero__caption" id="heroCaption" aria-live="polite">Angan Lawn, on the night of a wedding</p>
+
+      <button class="hero__play" type="button" id="heroPlay" aria-pressed="true">
+        <span class="hero__play-label">Pause</span>
+      </button>
+
+      <button class="hero__arrow" type="button" data-slide="next" aria-controls="heroSlides">
+        <span class="sr">Next image</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
     </div>
   </section>
 
@@ -196,33 +239,6 @@
         </figure>
       </div>
 
-    </div>
-  </section>
-
-  <!-- THE FILM -------------------------------------------------------------
-       The hotel's own property film. It is 638 by 360, which is why it sits
-       in a held frame rather than running full bleed: stretched across a
-       1920 hero it would look softer than the photographs around it and
-       cheapen everything next to it. At this width it is close to native and
-       stays sharp.
-
-       Nothing downloads until the band is near the viewport. main.js swaps
-       data-src onto the source element and starts playback then. -->
-  <section class="section film" aria-labelledby="film-h">
-    <div class="wrap">
-      <h2 id="film-h" class="sr">The property in motion</h2>
-      <figure class="film__frame" data-reveal>
-        <video id="propertyFilm" class="film__video"
-               muted loop playsinline preload="none"
-               poster="assets/img/safal-facade-30-1.jpg"
-               aria-label="A short film of the property, its grounds and the lake">
-          <source data-src="assets/video/safal-mini.mp4" type="video/mp4">
-        </video>
-        <button class="film__toggle" type="button" id="filmToggle" aria-pressed="true">
-          <span class="film__toggle-label">Pause</span>
-        </button>
-        <figcaption>The property, the grounds and the water, filmed by the house.</figcaption>
-      </figure>
     </div>
   </section>
 
@@ -689,7 +705,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="assets/js/water.js?v=13" type="module"></script>
-<script src="assets/js/main.js?v=13" defer></script>
+<script src="assets/js/main.js?v=14" defer></script>
 </body>
 </html>

@@ -389,6 +389,102 @@ p { text-wrap: pretty; }
   object-fit: cover;
 }
 
+/* --- Hero slideshow ---
+   Crossfade only. The wordmark stays put and the property changes behind it,
+   which is the version of this that reads as confident; sliding the type
+   along with the picture reads as a carousel widget. */
+
+.hero__slides { position: absolute; inset: 0; }
+
+.hero__slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.4s var(--ease), visibility 0s linear 1.4s;
+}
+
+.hero__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1.4s var(--ease), visibility 0s;
+}
+
+/* A slow drift on the live frame only, so a still photograph behind a fixed
+   wordmark does not sit completely dead between changes. */
+.hero__slide img { transform: scale(1.04); }
+.is-enhanced .hero__slide.is-active img {
+  animation: heroDrift 9s linear forwards;
+}
+
+@keyframes heroDrift {
+  from { transform: scale(1.04); }
+  to   { transform: scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__slide { transition: none; }
+  .is-enhanced .hero__slide.is-active img { animation: none; }
+}
+
+/* --- Hero controls ---
+   Previous, caption, pause, next. Real buttons, 44px targets, and the
+   rotation stops on hover, on focus and for reduced motion. A hero that
+   changes under you with no way to stop it is the most common accessibility
+   failure on hotel sites. */
+
+.hero__controls {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--s-9) + var(--s-4));
+  translate: -50% 0;
+  z-index: var(--z-raised);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: calc(100% - var(--gutter) * 2);
+}
+
+.hero__arrow,
+.hero__play {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding-inline: var(--s-3);
+  color: var(--on-forest);
+  background: rgb(14 33 26 / 0.42);
+  backdrop-filter: blur(3px);
+  box-shadow: inset 0 0 0 1px rgb(244 242 236 / 0.26);
+  transition: background var(--t-fast) var(--ease);
+}
+.hero__arrow:hover,
+.hero__play:hover { background: rgb(14 33 26 / 0.78); }
+
+.hero__play {
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+}
+
+.hero__caption {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-inline: var(--s-4);
+  font-size: var(--fs-sm);
+  color: rgb(244 242 236 / 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 12px rgb(14 33 26 / 0.9);
+}
+
+@media (max-width: 639px) {
+  .hero__caption { display: none; }
+  .hero__controls { bottom: calc(var(--s-8) + var(--s-2)); }
+}
+
 .hero__media canvas {
   position: absolute;
   inset: 0;
@@ -475,7 +571,14 @@ p { text-wrap: pretty; }
    opening frame, and stacks as a normal block on a phone where overlapping
    anything is a mistake. */
 
-.availability { background: var(--paper); }
+/* Transparent, not paper.
+
+   This section is pulled up over the hero's bottom edge, and the bar inside
+   it is capped at the content width. With a paper background the section
+   painted a cream band across the last 112px of the photograph either side
+   of the bar, so the hero looked cut off short of the fold. It was always
+   full height; the band on top of it was the problem. */
+.availability { background: transparent; }
 
 .availability__bar {
   display: grid;
@@ -968,52 +1071,6 @@ p { text-wrap: pretty; }
 @media (min-width: 900px) {
   .intro__figure { margin-bottom: calc(var(--s-8) * -1); }
 }
-
-/* --- 7a. THE FILM -------------------------------------------------------
-   Held at a width the source resolution can actually carry. */
-
-.film { padding-block: var(--s-8); }
-
-.film__frame {
-  position: relative;
-  margin: 0 auto;
-  max-width: 860px;
-}
-
-.film__video {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  background: var(--forest-deep);
-  display: block;
-}
-
-.film__frame figcaption {
-  margin-top: var(--s-3);
-  font-size: var(--fs-sm);
-  color: var(--ink-faint);
-  text-align: center;
-}
-
-/* A moving image the visitor cannot stop is an accessibility failure, not a
-   design choice, so the control is always there rather than on hover. */
-/* Bottom left, not bottom right: the dock lives in the bottom right corner
-   of the viewport and the two were landing on top of each other. */
-.film__toggle {
-  position: absolute;
-  left: var(--s-3);
-  bottom: calc(var(--s-3) + 2.4rem);
-  min-height: 40px;
-  padding: var(--s-2) var(--s-4);
-  background: rgb(14 33 26 / 0.72);
-  color: var(--on-forest);
-  font-size: var(--fs-sm);
-  letter-spacing: var(--tr-wide);
-  text-transform: uppercase;
-  backdrop-filter: blur(4px);
-  transition: background var(--t-fast) var(--ease);
-}
-.film__toggle:hover { background: var(--forest-deep); }
 
 /* --- 7b. THE TALLY ------------------------------------------------------
    A list where every row is a headline. Hairline between rows, nothing

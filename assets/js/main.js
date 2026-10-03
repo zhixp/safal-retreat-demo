@@ -67,67 +67,103 @@
     });
   }
 
-  /* --- The property film ------------------------------------------------
-     Nothing downloads until the band is close. A 5.7 MB file has no business
-     being fetched by someone who reads the first screen and leaves.
+  /* --- Hero slideshow ---------------------------------------------------
+     Five frames of the property behind a wordmark that does not move.
 
-     Autoplay is muted, looped and inline, which is the only combination
-     mobile browsers honour. Reduced motion means the poster frame and a
-     play control instead, because an unstoppable moving image is exactly
-     what that setting exists to prevent. */
+     The first frame ships in the markup with its own src so it is the LCP
+     image and is never waiting on this script. The other four carry
+     data-src and are fetched one ahead of where the viewer is, so opening
+     the page costs one photograph rather than five.
 
-  const film = document.getElementById("propertyFilm");
-  const filmToggle = document.getElementById("filmToggle");
+     It stops on hover, on focus anywhere inside the hero, when the tab is
+     hidden, when the hero scrolls away, and permanently if the visitor asks
+     for reduced motion. All four of those are cases where a picture
+     changing by itself is either wasted or unwanted. */
 
-  if (film) {
-    const source = film.querySelector("source[data-src]");
-    const wantsStill = reduce.matches;
+  const slideWrap = document.getElementById("heroSlides");
 
-    const load = () => {
-      if (!source || source.src) return;
-      source.src = source.dataset.src;
-      film.load();
-      if (!wantsStill) film.play().catch(() => {});
+  if (slideWrap) {
+    const slides = [...slideWrap.querySelectorAll(".hero__slide")];
+    const caption = document.getElementById("heroCaption");
+    const playBtn = document.getElementById("heroPlay");
+    const heroEl = document.querySelector(".hero");
+    const DWELL = 6500;
+
+    let index = 0;
+    let timer = null;
+    let wantsAuto = !reduce.matches;
+    let onScreen = true;
+
+    const preload = (i) => {
+      const img = slides[i]?.querySelector("img[data-src]");
+      if (!img) return;
+      img.src = img.dataset.src;
+      delete img.dataset.src;
     };
 
-    new IntersectionObserver(
-      ([entry], obs) => {
-        if (!entry.isIntersecting) return;
-        obs.disconnect();
-        load();
-      },
-      { rootMargin: "300px 0px" }
-    ).observe(film);
+    // One ahead is enough to make the next change seamless.
+    preload(1);
 
-    // Off screen means off. No reason to decode frames nobody is looking at.
+    const go = (next) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("is-active", i === index));
+      if (caption) caption.textContent = slides[index].dataset.caption || "";
+      preload((index + 1) % slides.length);
+    };
+
+    const stop = () => { clearInterval(timer); timer = null; };
+
+    const start = () => {
+      stop();
+      if (!wantsAuto || !onScreen) return;
+      timer = setInterval(() => go(index + 1), DWELL);
+    };
+
+    const setAuto = (on) => {
+      wantsAuto = on;
+      if (playBtn) {
+        playBtn.setAttribute("aria-pressed", String(on));
+        playBtn.querySelector(".hero__play-label").textContent = on ? "Pause" : "Play";
+      }
+      on ? start() : stop();
+    };
+
+    document.querySelectorAll("[data-slide]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        go(index + (btn.dataset.slide === "next" ? 1 : -1));
+        // A deliberate step means they are driving now; don't yank it back.
+        setAuto(false);
+      })
+    );
+
+    playBtn?.addEventListener("click", () => setAuto(!wantsAuto));
+
+    // Pause while a pointer or the keyboard is inside the hero, so nothing
+    // moves under someone who is reading or tabbing through the controls.
+    ["pointerenter", "focusin"].forEach((ev) =>
+      heroEl?.addEventListener(ev, stop)
+    );
+    ["pointerleave", "focusout"].forEach((ev) =>
+      heroEl?.addEventListener(ev, () => { if (wantsAuto) start(); })
+    );
+
+    // A hidden tab freezes rAF anyway; this stops the interval queueing up
+    // changes nobody saw.
+    document.addEventListener("visibilitychange", () =>
+      document.hidden ? stop() : (wantsAuto && onScreen && start())
+    );
+
     new IntersectionObserver(
       ([entry]) => {
-        if (!source || !source.src || wantsStill) return;
-        if (entry.isIntersecting) film.play().catch(() => {});
-        else film.pause();
+        onScreen = entry.isIntersecting;
+        onScreen && wantsAuto ? start() : stop();
       },
-      { threshold: 0.1 }
-    ).observe(film);
+      { threshold: 0.2 }
+    ).observe(slideWrap);
 
-    if (filmToggle) {
-      const sync = () => {
-        const playing = !film.paused;
-        filmToggle.setAttribute("aria-pressed", String(playing));
-        filmToggle.querySelector(".film__toggle-label").textContent =
-          playing ? "Pause" : "Play";
-      };
+    reduce.addEventListener("change", (e) => { if (e.matches) setAuto(false); });
 
-      filmToggle.addEventListener("click", () => {
-        load();
-        if (film.paused) film.play().catch(() => {});
-        else film.pause();
-        sync();
-      });
-
-      film.addEventListener("play", sync);
-      film.addEventListener("pause", sync);
-      if (wantsStill) sync();
-    }
+    setAuto(wantsAuto);
   }
 
   /* --- The dock ---------------------------------------------------------
